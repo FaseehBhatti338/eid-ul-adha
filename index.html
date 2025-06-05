@@ -225,11 +225,34 @@
             }
         }
 
+        .ad-banner-container {
+            margin: 15px auto; /* Adds some space above/below and centers */
+            width: 320px; /* Ad width */
+            height: 50px; /* Ad height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* In case ad content tries to be larger */
+        }
+
     </style>
 </head>
 <body>
 
     <div class="container">
+        <div class="ad-banner-container">
+            <script type="text/javascript">
+                atOptions = {
+                    'key' : '7bb09d31714247c6738013e59b2a3f91',
+                    'format' : 'iframe',
+                    'height' : 50,
+                    'width' : 320,
+                    'params' : {}
+                };
+            </script>
+            <script type="text/javascript" src="//www.highperformanceformat.com/7bb09d31714247c6738013e59b2a3f91/invoke.js"></script>
+        </div>
+
         <video src="eid.mp4" alt="Eid Animation" class="eid-gif" autoplay loop muted playsinline></video>
 
         <p class="greeting-text">Eid Mubarak! May this Eid bring joy, peace, and prosperity to all!</p>
@@ -246,6 +269,19 @@
             </svg>
             <span>Share on WhatsApp</span>
         </button>
+
+        <div class="ad-banner-container">
+            <script type="text/javascript">
+                atOptions = {
+                    'key' : '7bb09d31714247c6738013e59b2a3f91',
+                    'format' : 'iframe',
+                    'height' : 50,
+                    'width' : 320,
+                    'params' : {}
+                };
+            </script>
+            <script type="text/javascript" src="//www.highperformanceformat.com/7bb09d31714247c6738013e59b2a3f91/invoke.js"></script>
+        </div>
     </div>
 
     <audio id="backgroundMusic" loop>
@@ -315,10 +351,16 @@
         muteBtn.addEventListener('click', () => {
             backgroundMusic.muted = !backgroundMusic.muted;
             muteBtn.textContent = backgroundMusic.muted ? '🔇' : '🔊';
+            // If unmuting and music was paused (e.g. autoplay failed), try to play.
+            if (!backgroundMusic.muted && backgroundMusic.paused) {
+                backgroundMusic.play().catch(e => console.log("Error playing on unmute:", e));
+            }
         });
 
         volumeCtrl.addEventListener('input', () => {
             backgroundMusic.volume = parseFloat(volumeCtrl.value);
+            let wasMuted = backgroundMusic.muted;
+
             if (backgroundMusic.volume > 0 && backgroundMusic.muted) {
                 backgroundMusic.muted = false;
                 muteBtn.textContent = '🔊';
@@ -326,8 +368,11 @@
                  backgroundMusic.muted = true;
                  muteBtn.textContent = '🔇';
             }
-            // If volume is > 0 and it was previously unmuted, it remains unmuted (button already shows 🔊)
-            // If volume is 0 and it was previously muted, it remains muted (button already shows 🔇)
+
+            // If volume adjusted to be audible and music was paused (e.g. autoplay failed or volume was 0), try to play.
+            if (backgroundMusic.volume > 0 && !backgroundMusic.muted && backgroundMusic.paused) {
+                 backgroundMusic.play().catch(e => console.log("Error playing on volume change:", e));
+            }
         });
         
         // Set initial volume control value and mute button text based on audio element state
